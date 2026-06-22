@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String   @id @default(cuid())
+  email                 String   @unique
+  googleAccessToken     String?
+  googleRefreshToken    String?
+  imapHost              String?
+  imapPort              Int?
+  imapUsername          String?
+  imapPassword          String?
+  imapTls               Boolean  @default(true)
+  lastSyncAt            DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  transactions          Transaction[]
+  emailLogs             EmailLog[]
+}
+
+model Transaction {
+  id                        String   @id @default(cuid())
+  amount                    Float
+  balance_after_transaction Float?
+  credit_amount             Float?
+  debit_amount              Float?
+  merchant_name             String
+  payment_method            String
+  bank_name                 String?
+  transaction_reference     String?
+  email_sender              String
+  email_subject             String
+  email_folder              String
+  message_id                String   @unique
+  transaction_date          DateTime
+  raw_email                 String?
+  llm_confidence            Float    @default(0.0)
+  category                  String   @default("Other")
+  currency                  String   @default("INR")
+  userId                    String
+  user                      User     @relation(fields: [userId], references: [id])
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}
+
+model EmailLog {
+  id              String   @id @default(cuid())
+  event_type      String   // e.g. "OAUTH_SUCCESS", "SYNC_STARTED", "EMAIL_CLASSIFIED", "LLM_SUCCESS", "DB_INSERT"
+  subject         String?
+  sender          String?
+  message         String
+  success         Boolean  @default(true)
+  transactionId   String?  // If it led to a transaction
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+}
+

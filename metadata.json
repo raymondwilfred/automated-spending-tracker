@@ -1,0 +1,8 @@
+{
+  "name": "Automated Spending Tracker",
+  "description": "Full-stack email-powered transaction tracker. Leverage server-side Gemini AI parsing to map bank email notifications into dynamic personal finance analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
